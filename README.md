@@ -279,3 +279,7 @@ The goal of SkillBridge AI is to reduce the gap between **what students know** a
 ## 📄 License
 
 This project is developed as part of **Smart India Hackathon 2026**.
+
+## Person 1: Authentication and User Management
+
+The working app lives in this repository. See [`docs/auth-user-management.md`](docs/auth-user-management.md) for API contracts, setup commands, migration steps, and integration guidance for Persons 2–4. Password reset is intentionally a documented placeholder until a verified email delivery service is configured.

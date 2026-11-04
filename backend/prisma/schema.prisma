@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  INSTITUTION
+  INDUSTRY
+  ADMIN
+}
+
+model User {
+  id             String          @id @default(cuid())
+  fullName       String
+  email          String          @unique
+  password       String
+  phone          String?
+  role           Role
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  studentProfile StudentProfile?
+  institution    Institution?
+  company        Company?
+
+  @@index([role, isActive])
+}
+
+model Institution {
+  id            String           @id @default(cuid())
+  userId        String           @unique
+  name          String
+  officialEmail String           @unique
+  website       String?
+  address       String?
+  description   String?
+  contactInfo   String?
+  isVerified    Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students      StudentProfile[]
+
+  @@index([isVerified])
+}
+
+model StudentProfile {
+  id             String       @id @default(cuid())
+  userId         String       @unique
+  institutionId  String?
+  degree         String?
+  department     String?
+  graduationYear Int?
+  semester       Int?
+  bio            String?
+  profileImage   String?
+  resumeUrl      String?
+  linkedIn       String?
+  github         String?
+  portfolio      String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution    Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+
+  @@index([institutionId])
+  @@index([graduationYear])
+}
+
+// Integration anchor for Person 3: extend this model with opportunities and required skills.
+model Company {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  name          String
+  officialEmail String   @unique
+  website       String?
+  address       String?
+  description   String?
+  contactInfo   String?
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([isVerified])
+}
