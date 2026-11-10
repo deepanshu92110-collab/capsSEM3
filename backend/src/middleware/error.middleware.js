@@ -7,6 +7,11 @@ export function notFound(req, res) {
     });
 }
 export function errorHandler(err, req, res, next) {
+  if (
+    err?.type === "entity.parse.failed" ||
+    (err instanceof SyntaxError && err.status === 400 && "body" in err)
+  )
+    return res.status(400).json({ success: false, message: "Request body contains malformed JSON" });
   if (err?.code === "P2002")
     return res
       .status(409)
@@ -18,6 +23,11 @@ export function errorHandler(err, req, res, next) {
     return res
       .status(404)
       .json({ success: false, message: "Record not found" });
+  if (err?.code === "P2003")
+    return res.status(409).json({
+      success: false,
+      message: "This operation conflicts with related records",
+    });
   if (
     err?.name === "PrismaClientInitializationError" ||
     ["P1000", "P1001", "P1003"].includes(err?.code)

@@ -6,6 +6,8 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import studentRoutes from "./routes/student.routes.js";
 import institutionRoutes from "./routes/institution.routes.js";
+import companyRoutes from "./routes/company.routes.js";
+import opportunityRoutes from "./routes/opportunity.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 const app = express();
 app.use(
@@ -24,6 +26,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/institutions", institutionRoutes);
+app.use("/api/companies", companyRoutes);
+app.use("/api/opportunities", opportunityRoutes);
 app.use(notFound);
 app.use(errorHandler);
 export default app;
