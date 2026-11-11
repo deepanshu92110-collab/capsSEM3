@@ -13,8 +13,8 @@ export default function Login() {
     setError("");
     setBusy(true);
     try {
-      await login(form);
-      navigate(location.state?.from?.pathname || "/");
+      const user = await login(form);
+      navigate(location.state?.from?.pathname || (user.role === "INDUSTRY" ? "/industry" : "/"));
     } catch (err) {
       setError(
         err.response?.data?.message ||

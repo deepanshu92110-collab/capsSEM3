@@ -12,9 +12,10 @@ export default function Home() {
           <span>
             {user.fullName} · {user.role}
           </span>
-          <Link to={user.role === "INSTITUTION" ? "/institution" : "/profile"}>
+          <Link to={user.role === "INDUSTRY" ? "/industry" : user.role === "INSTITUTION" ? "/institution" : "/profile"}>
             My profile
           </Link>
+          {user.role === "STUDENT" && <Link to="/opportunities">Opportunities</Link>}
           <button className="text-button" onClick={logout}>
             Sign out
           </button>
@@ -44,7 +45,9 @@ export default function Home() {
           <Link
             className="button-link"
             to={
-              user.role === "INSTITUTION"
+              user.role === "INDUSTRY"
+                ? "/industry"
+                : user.role === "INSTITUTION"
                 ? "/institution/edit"
                 : "/profile/edit"
             }
