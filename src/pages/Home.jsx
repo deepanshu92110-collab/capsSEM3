@@ -16,6 +16,7 @@ export default function Home() {
             My profile
           </Link>
           {user.role === "STUDENT" && <Link to="/opportunities">Opportunities</Link>}
+          {user.role === "STUDENT" && <Link to="/skills">Skills & AI</Link>}
           <button className="text-button" onClick={logout}>
             Sign out
           </button>
