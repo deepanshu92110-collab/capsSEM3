@@ -14,6 +14,7 @@ import ManageOpportunities from "./pages/ManageOpportunities";
 import OpportunityForm from "./pages/OpportunityForm";
 import OpportunityBrowse from "./pages/OpportunityBrowse";
 import OpportunityDetails from "./pages/OpportunityDetails";
+import SkillsHub from "./pages/SkillsHub";
 import {
   StudentProfile,
   EditStudentProfile,
@@ -45,6 +46,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/industry/opportunities/:id/edit" element={<OpportunityForm />} />
             </Route>
             <Route element={<RoleBasedRoute roles={["STUDENT"]} />}>
+              <Route path="/skills" element={<SkillsHub />} />
               <Route path="/opportunities" element={<OpportunityBrowse />} />
               <Route path="/opportunities/:id" element={<OpportunityDetails />} />
               <Route path="/profile" element={<StudentProfile />} />
