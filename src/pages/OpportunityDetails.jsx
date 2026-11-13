@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { industryService } from "../services/industryService";
+import { applicationService } from "../services/person4Service";
 
 function formatDate(value) {
   if (!value) return "Not specified";
@@ -30,6 +31,8 @@ export default function OpportunityDetails() {
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [applicationMessage, setApplicationMessage] = useState("");
+  const [applying, setApplying] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -116,6 +119,13 @@ export default function OpportunityDetails() {
                 Apply on company website
               </a>
             )}
+            <button disabled={applying || opportunity.status !== "OPEN"} onClick={async () => {
+              setApplying(true); setApplicationMessage("");
+              try { await applicationService.apply(opportunity.id); setApplicationMessage("Application submitted successfully."); }
+              catch (e) { setApplicationMessage(e.response?.data?.message || "Could not submit application."); }
+              finally { setApplying(false); }
+            }}>{applying ? "Submitting…" : "Apply with SkillBridge"}</button>
+            {applicationMessage && <p role="status">{applicationMessage}</p>}
           </article>
         ) : null}
       </section>

@@ -17,6 +17,9 @@ export default function Home() {
           </Link>
           {user.role === "STUDENT" && <Link to="/opportunities">Opportunities</Link>}
           {user.role === "STUDENT" && <Link to="/skills">Skills & AI</Link>}
+          <Link to="/notifications">Notifications</Link>
+          {user.role === "STUDENT" && <Link to="/applications">Applications</Link>}
+          {user.role === "ADMIN" && <Link to="/dashboard/admin">Platform dashboard</Link>}
           <button className="text-button" onClick={logout}>
             Sign out
           </button>
@@ -28,6 +31,22 @@ export default function Home() {
         <p className="muted">
           Your next opportunity starts with a strong profile.
         </p>
+        <div className="card welcome-card">
+          <div>
+            <h2>Career activity</h2>
+            <p className="muted">Review your applications, interviews, internships and placement records.</p>
+          </div>
+          <div className="home-activity-links">
+            {user.role === "STUDENT" && <>
+              <Link to="/applications">My applications</Link>
+              <Link to="/interviews">My interviews</Link>
+              <Link to="/internships">My internships</Link>
+              <Link to="/placements">My placements</Link>
+            </>}
+            {user.role === "INDUSTRY" && <Link to="/industry/applicants">Manage applicants</Link>}
+            {user.role === "INSTITUTION" && <Link to="/dashboard/institution">Institution dashboard</Link>}
+          </div>
+        </div>
         <div className="card welcome-card">
           <div>
             <h2>

@@ -15,6 +15,7 @@ import OpportunityForm from "./pages/OpportunityForm";
 import OpportunityBrowse from "./pages/OpportunityBrowse";
 import OpportunityDetails from "./pages/OpportunityDetails";
 import SkillsHub from "./pages/SkillsHub";
+import { AdminPlacements, Applicants, ApplicantDetails, ApplicationDetails, CompanyInterviews, CompanyInternships, InstitutionInternships, InstitutionPlacements, InstitutionStudents, MyApplications, MyInterviews, MyInternships, MyPlacements, NotificationsPage, Person4Dashboard, PlacementAnalytics } from "./pages/Person4Pages";
 import {
   StudentProfile,
   EditStudentProfile,
@@ -38,7 +39,21 @@ createRoot(document.getElementById("root")).render(
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route element={<RoleBasedRoute roles={["STUDENT"]} />}>
+              <Route path="/applications" element={<MyApplications />} />
+              <Route path="/applications/:id" element={<ApplicationDetails />} />
+              <Route path="/interviews" element={<MyInterviews />} />
+              <Route path="/internships" element={<MyInternships />} />
+              <Route path="/placements" element={<MyPlacements />} />
+              <Route path="/dashboard/student" element={<Person4Dashboard kind="student" />} />
+            </Route>
             <Route element={<RoleBasedRoute roles={["INDUSTRY"]} />}>
+              <Route path="/industry/applicants" element={<Applicants />} />
+              <Route path="/industry/applicants/:id" element={<ApplicantDetails />} />
+              <Route path="/industry/interviews" element={<CompanyInterviews />} />
+              <Route path="/industry/internships" element={<CompanyInternships />} />
+              <Route path="/dashboard/industry" element={<Person4Dashboard kind="industry" />} />
               <Route path="/industry" element={<IndustryDashboard />} />
               <Route path="/industry/company" element={<CompanyProfile />} />
               <Route path="/industry/opportunities" element={<ManageOpportunities />} />
@@ -53,11 +68,20 @@ createRoot(document.getElementById("root")).render(
               <Route path="/profile/edit" element={<EditStudentProfile />} />
             </Route>
             <Route element={<RoleBasedRoute roles={["INSTITUTION"]} />}>
+              <Route path="/dashboard/institution" element={<Person4Dashboard kind="institution" />} />
+              <Route path="/institution/internships" element={<InstitutionInternships />} />
+              <Route path="/institution/students" element={<InstitutionStudents />} />
+              <Route path="/institution/placements" element={<InstitutionPlacements />} />
+              <Route path="/institution/placement-analytics" element={<PlacementAnalytics />} />
               <Route path="/institution" element={<InstitutionProfile />} />
               <Route
                 path="/institution/edit"
                 element={<EditInstitutionProfile />}
               />
+            </Route>
+            <Route element={<RoleBasedRoute roles={["ADMIN"]} />}>
+              <Route path="/dashboard/admin" element={<Person4Dashboard kind="admin" />} />
+              <Route path="/admin/placements" element={<AdminPlacements />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

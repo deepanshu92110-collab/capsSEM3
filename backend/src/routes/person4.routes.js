@@ -1,0 +1,13 @@
+import { Router } from "express";
+import * as c from "../controllers/person4.controller.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
+import { allowRoles } from "../middleware/role.middleware.js";
+const r=Router(); r.use(requireAuth);
+r.post("/applications",allowRoles("STUDENT"),c.apply); r.get("/applications/me",allowRoles("STUDENT"),c.myApplications); r.get("/applications/company/me",allowRoles("INDUSTRY"),c.companyApplications); r.get("/applications/company/me/stats",allowRoles("INDUSTRY"),c.companyStats); r.get("/applications/:id/history",allowRoles("STUDENT","INDUSTRY","ADMIN"),c.history); r.get("/applications/:id",allowRoles("STUDENT","INDUSTRY","ADMIN"),c.getApplication); r.patch("/applications/:id/withdraw",allowRoles("STUDENT"),c.withdraw); r.patch("/applications/:id/status",allowRoles("INDUSTRY"),c.updateApplicationStatus);
+r.post("/interviews",allowRoles("INDUSTRY"),c.createInterview); r.get("/interviews/me",allowRoles("STUDENT"),c.myInterviews); r.get("/interviews/company/me",allowRoles("INDUSTRY"),c.companyInterviews); r.patch("/interviews/:id/cancel",allowRoles("INDUSTRY"),c.cancelInterview); r.patch("/interviews/:id",allowRoles("INDUSTRY"),c.updateInterview);
+r.post("/internships",allowRoles("INDUSTRY"),c.createInternship); r.get("/internships/me",allowRoles("STUDENT"),c.myInternships); r.get("/internships/company/me",allowRoles("INDUSTRY"),c.companyInternships); r.get("/internships/institution/me",allowRoles("INSTITUTION"),c.institutionInternships); r.patch("/internships/:id/status",allowRoles("INDUSTRY","INSTITUTION","ADMIN"),c.updateInternship);
+r.post("/placements",allowRoles("INDUSTRY","INSTITUTION","ADMIN"),c.createPlacement); r.get("/placements/me",allowRoles("STUDENT"),c.myPlacements); r.get("/placements/institution/me",allowRoles("INSTITUTION"),c.institutionPlacements); r.get("/placements/admin",allowRoles("ADMIN"),c.adminPlacements); r.patch("/placements/:id",allowRoles("INSTITUTION","ADMIN"),c.updatePlacement);
+r.get("/institutions/me/students",allowRoles("INSTITUTION"),c.institutionStudents);
+r.get("/notifications",c.notifications); r.get("/notifications/unread-count",c.unreadCount); r.patch("/notifications/read-all",c.markAllRead); r.patch("/notifications/:id/read",c.markRead); r.delete("/notifications/:id",c.deleteNotification);
+r.get("/dashboard/student",allowRoles("STUDENT"),c.dashboardStudent); r.get("/dashboard/industry",allowRoles("INDUSTRY"),c.dashboardIndustry); r.get("/dashboard/institution",allowRoles("INSTITUTION"),c.dashboardInstitution); r.get("/dashboard/admin",allowRoles("ADMIN"),c.dashboardAdmin);
+export default r;

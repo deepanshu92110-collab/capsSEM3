@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { industryService } from "../services/industryService";
+import { dashboardService } from "../services/person4Service";
 
 const statuses = ["DRAFT", "OPEN", "CLOSED", "ARCHIVED"];
 
@@ -24,6 +25,7 @@ export default function IndustryDashboard() {
   const [company, setCompany] = useState(null);
   const [recentOpportunities, setRecentOpportunities] = useState([]);
   const [counts, setCounts] = useState({ total: 0, DRAFT: 0, OPEN: 0, CLOSED: 0, ARCHIVED: 0 });
+  const [hiringStats, setHiringStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
@@ -34,9 +36,10 @@ export default function IndustryDashboard() {
       setLoading(true);
       setError("");
       try {
-        const [companyResponse, recentResponse, ...statusResponses] = await Promise.all([
+        const [companyResponse, recentResponse, hiringResponse, ...statusResponses] = await Promise.all([
           industryService.getMyCompany(),
           industryService.getMyOpportunities({ page: 1, pageSize: 5, sort: "newest" }),
+          dashboardService.industry(),
           ...statuses.map((status) =>
             industryService.getMyOpportunities({ page: 1, pageSize: 1, status }),
           ),
@@ -52,6 +55,7 @@ export default function IndustryDashboard() {
         );
         setCompany(companyResponse.data.data.company);
         setRecentOpportunities(recentData.opportunities || []);
+        setHiringStats(hiringResponse.data.data);
         setCounts({
           total: recentData.pagination?.total ?? recentData.opportunities?.length ?? 0,
           ...statusCounts,
@@ -78,6 +82,7 @@ export default function IndustryDashboard() {
           <span>{user?.fullName} · INDUSTRY</span>
           <Link to="/industry/company">Company Profile</Link>
           <Link to="/industry/opportunities">Manage Opportunities</Link>
+          <Link to="/industry/applicants">Applicants</Link>
           <button className="text-button" onClick={logout}>Sign out</button>
         </nav>
       </header>
@@ -123,6 +128,17 @@ export default function IndustryDashboard() {
                   <strong>{counts[status]}</strong>
                 </article>
               ))}
+            </section>
+
+            <section className="industry-status-grid" aria-label="Hiring activity">
+              {[
+                ["Applicants", Object.values(hiringStats?.applications || {}).reduce((a, b) => a + b, 0)],
+                ["New this week", hiringStats?.newApplications ?? 0],
+                ["Shortlisted", hiringStats?.applications?.SHORTLISTED ?? 0],
+                ["Selected", hiringStats?.applications?.SELECTED ?? 0],
+                ["Interviews", hiringStats?.interviews ?? 0],
+                ["Internships", hiringStats?.internships ?? 0],
+              ].map(([label, count]) => <article className="card industry-count-card" key={label}><span className="muted">{label}</span><strong>{count}</strong></article>)}
             </section>
 
             <section className="card industry-recent-card">

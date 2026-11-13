@@ -14,6 +14,10 @@ import skillGapRoutes from "./routes/skillGap.routes.js";
 import matchingRoutes from "./routes/matching.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
 import recommendationRoutes from "./routes/recommendation.routes.js";
+import person4Routes from "./routes/person4.routes.js";
+import { prisma } from "./config/prisma.js";
+import { requireAuth } from "./middleware/auth.middleware.js";
+import { canAccessResumeFile } from "./utils/person4.rules.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 const app = express();
 app.use(
@@ -24,6 +28,15 @@ app.use(
 );
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+app.use("/uploads", (req, res, next) => {
+  if (path.extname(req.path).toLowerCase() !== ".pdf") return next();
+  return requireAuth(req, res, () => {
+    const filePath = `/uploads/${path.basename(req.path)}`;
+    canAccessResumeFile(prisma, req.user, filePath)
+      .then(canRead => canRead ? next() : res.status(404).json({ success: false, message: "File not found" }))
+      .catch(next);
+  });
+});
 app.use("/uploads", express.static(path.resolve("uploads")));
 app.get("/api/health", (req, res) =>
   res.json({ success: true, data: { status: "ok" } }),
@@ -40,6 +53,7 @@ app.use("/api/skill-gap", skillGapRoutes);
 app.use("/api/matching", matchingRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/recommendations", recommendationRoutes);
+app.use("/api", person4Routes);
 app.use(notFound);
 app.use(errorHandler);
 export default app;
