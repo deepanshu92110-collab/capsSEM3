@@ -1,6 +1,7 @@
 import { OpportunityStatus, OpportunityType, WorkMode } from "@prisma/client";
 import { prisma } from "../config/prisma.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { publicOpportunityWhere } from "../utils/publicOpportunity.js";
 import {
   isAllowedOpportunityTransition,
   isFutureDate,
@@ -124,9 +125,7 @@ async function listOpportunities(req, options = {}) {
   const pagination = parsePagination(req.query);
   if (pagination.error) throw Object.assign(new Error(pagination.error), { status: 400 });
   const { page, pageSize } = pagination;
-  const where = {};
-  if (options.companyId) where.companyId = options.companyId;
-  else if (!options.includeAllStatuses) where.status = OpportunityStatus.OPEN;
+  const where = options.companyId ? { companyId: options.companyId } : options.includeAllStatuses ? {} : publicOpportunityWhere();
   if (req.query.status !== undefined) {
     if (!options.includeAllStatuses) {
       const publicStatus = publicOpportunityStatus(req.query.status);
@@ -178,7 +177,7 @@ export const getOpportunity = asyncHandler(async (req, res) => {
   const opportunity = await prisma.opportunity.findUnique({ where: { id: req.params.id }, include });
   if (!opportunity) return res.status(404).json({ success: false, message: "Opportunity not found" });
   const canSeeDraft = req.user.role === "ADMIN" || (req.user.role === "INDUSTRY" && (await prisma.company.findUnique({ where: { userId: req.user.id }, select: { id: true } }))?.id === opportunity.companyId);
-  if (opportunity.status !== OpportunityStatus.OPEN && !canSeeDraft)
+  if ((opportunity.status !== OpportunityStatus.OPEN || !opportunity.company.isVerified) && !canSeeDraft)
     return res.status(404).json({ success: false, message: "Opportunity not found" });
   res.json({ success: true, data: { opportunity } });
 });

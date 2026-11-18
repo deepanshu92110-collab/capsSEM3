@@ -20,6 +20,8 @@ export default function Home() {
           <Link to="/notifications">Notifications</Link>
           {user.role === "STUDENT" && <Link to="/applications">Applications</Link>}
           {user.role === "ADMIN" && <Link to="/dashboard/admin">Platform dashboard</Link>}
+          {user.role === "ADMIN" && <Link to="/admin/companies">Company verification</Link>}
+          {user.role === "ADMIN" && <Link to="/admin/placements">Manage placements</Link>}
           <button className="text-button" onClick={logout}>
             Sign out
           </button>
@@ -45,6 +47,7 @@ export default function Home() {
             </>}
             {user.role === "INDUSTRY" && <Link to="/industry/applicants">Manage applicants</Link>}
             {user.role === "INSTITUTION" && <Link to="/dashboard/institution">Institution dashboard</Link>}
+            {user.role === "ADMIN" && <><Link to="/admin/companies">Review companies</Link><Link to="/admin/placements">Manage placements</Link></>}
           </div>
         </div>
         <div className="card welcome-card">
@@ -69,7 +72,7 @@ export default function Home() {
                 ? "/industry"
                 : user.role === "INSTITUTION"
                 ? "/institution/edit"
-                : "/profile/edit"
+                : user.role === "STUDENT" ? "/profile/edit" : "/dashboard/admin"
             }
           >
             Manage profile

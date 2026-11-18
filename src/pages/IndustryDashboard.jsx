@@ -107,9 +107,9 @@ export default function IndustryDashboard() {
                   <p className="eyebrow">YOUR COMPANY</p>
                   <h2>{company?.name || "Company profile"}</h2>
                 </div>
-                <p className={`industry-verification ${company?.isVerified ? "is-verified" : "is-pending"}`}>
+                <p className={`industry-verification ${company?.verificationStatus === "VERIFIED" ? "is-verified" : company?.verificationStatus === "REJECTED" ? "is-rejected" : "is-pending"}`}>
                   <span className="industry-verification-dot" aria-hidden="true" />
-                  {company?.isVerified ? "Verified" : "Pending Verification"}
+                  {company?.verificationStatus === "REJECTED" ? "Verification rejected" : company?.verificationStatus === "VERIFIED" ? "Verified" : "Pending Verification"}
                 </p>
                 <Link className="industry-inline-link" to="/industry/company">View company profile →</Link>
               </article>

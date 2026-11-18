@@ -118,9 +118,9 @@ export default function CompanyProfile() {
             <div className="company-profile-heading">
               <div>
                 <p className="eyebrow">COMPANY DETAILS</p>
-                <p className={`industry-verification ${company?.isVerified ? "is-verified" : "is-pending"}`}>
+                <p className={`industry-verification ${company?.verificationStatus === "VERIFIED" ? "is-verified" : company?.verificationStatus === "REJECTED" ? "is-rejected" : "is-pending"}`}>
                   <span className="industry-verification-dot" aria-hidden="true" />
-                  {company?.isVerified ? "Verified" : "Pending Verification"}
+                  {company?.verificationStatus === "REJECTED" ? "Verification rejected" : company?.verificationStatus === "VERIFIED" ? "Verified" : "Pending Verification"}
                 </p>
               </div>
               {!editing && <button type="button" onClick={() => { setEditing(true); setSuccess(""); }}>Edit profile</button>}

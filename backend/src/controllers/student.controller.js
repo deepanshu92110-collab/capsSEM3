@@ -1,5 +1,7 @@
 import { prisma } from "../config/prisma.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { studentProfileAccessWhere } from "../utils/studentAccess.js";
+import { validStudentProfile } from "../utils/studentProfile.validation.js";
 const fields = [
   "institutionId",
   "degree",
@@ -8,7 +10,6 @@ const fields = [
   "semester",
   "bio",
   "profileImage",
-  "resumeUrl",
   "linkedIn",
   "github",
   "portfolio",
@@ -19,18 +20,6 @@ function profileData(body) {
     if (body[key] !== undefined)
       data[key] = body[key] === "" ? null : body[key];
   return data;
-}
-function validProfile(data) {
-  return (
-    (!data.graduationYear ||
-      (Number.isInteger(data.graduationYear) &&
-        data.graduationYear >= 2000 &&
-        data.graduationYear <= 2100)) &&
-    (!data.semester ||
-      (Number.isInteger(data.semester) &&
-        data.semester >= 1 &&
-        data.semester <= 12))
-  );
 }
 export const getOwnStudent = asyncHandler(async (req, res) => {
   const profile = await prisma.studentProfile.findUnique({
@@ -44,7 +33,7 @@ export const getOwnStudent = asyncHandler(async (req, res) => {
 });
 export const createStudent = asyncHandler(async (req, res) => {
   const data = profileData(req.body || {});
-  if (!validProfile(data))
+  if (!validStudentProfile(data))
     return res
       .status(400)
       .json({ success: false, message: "Invalid graduationYear or semester" });
@@ -62,7 +51,7 @@ export const updateStudent = asyncHandler(async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: "Provide at least one profile field" });
-  if (!validProfile(data))
+  if (!validStudentProfile(data))
     return res
       .status(400)
       .json({ success: false, message: "Invalid graduationYear or semester" });
@@ -75,11 +64,22 @@ export const updateStudent = asyncHandler(async (req, res) => {
   res.json({ success: true, data: { profile } });
 });
 export const getStudent = asyncHandler(async (req, res) => {
+  let institutionId;
+  let companyId;
+  if (req.user.role === "INSTITUTION") {
+    institutionId = (await prisma.institution.findUnique({ where: { userId: req.user.id }, select: { id: true } }))?.id;
+  }
+  if (req.user.role === "INDUSTRY") {
+    companyId = (await prisma.company.findUnique({ where: { userId: req.user.id }, select: { id: true } }))?.id;
+  }
+  const where = studentProfileAccessWhere({ user: req.user, requestedId: req.params.id, institutionId, companyId });
+  if (!where)
+    return res.status(404).json({ success: false, message: "Student profile not found" });
   const profile = await prisma.studentProfile.findFirst({
-    where: { OR: [{ id: req.params.id }, { userId: req.params.id }] },
+    where,
     include: {
       institution: { select: { id: true, name: true, isVerified: true } },
-      user: { select: { id: true, fullName: true, email: true, phone: true } },
+      user: { select: { id: true, fullName: true } },
     },
   });
   if (!profile)

@@ -3,3 +3,4 @@ dist/
 **/.env
 **/.env.*
 backend/uploads/
+skillbridge_db_backup.dump

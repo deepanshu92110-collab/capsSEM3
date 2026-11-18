@@ -26,7 +26,6 @@ const studentFields = [
   ["linkedIn", "LinkedIn URL"],
   ["github", "GitHub URL"],
   ["portfolio", "Portfolio URL"],
-  ["resumeUrl", "Resume URL"],
   ["profileImage", "Profile image URL"],
 ];
 const institutionFields = [
@@ -147,6 +146,18 @@ function Profile({ kind, edit = false }) {
             </dl>
             {student && (
               <>
+                <p>
+                  <strong>Resume: </strong>
+                  {profile?.resumeUrl ? (
+                    <a href={
+                      /^https?:\/\//i.test(api.defaults.baseURL)
+                        ? new URL(profile.resumeUrl, api.defaults.baseURL).href
+                        : new URL(profile.resumeUrl, window.location.origin).href
+                    } target="_blank" rel="noreferrer">
+                      View uploaded resume
+                    </a>
+                  ) : "Not uploaded"}
+                </p>
                 <FileUpload kind="resume" />
                 <FileUpload kind="image" />
               </>

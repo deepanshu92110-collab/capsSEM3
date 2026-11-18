@@ -6,6 +6,7 @@ import {
   getInstitution,
   verifyInstitution,
   verifyCompany,
+  listCompaniesForAdmin,
 } from "../controllers/institution.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import { allowRoles } from "../middleware/role.middleware.js";
@@ -14,6 +15,7 @@ router.use(requireAuth);
 router.post("/profile", allowRoles("INSTITUTION"), createInstitution);
 router.get("/me", allowRoles("INSTITUTION"), getOwnInstitution);
 router.patch("/profile", allowRoles("INSTITUTION"), updateInstitution);
+router.get("/companies", allowRoles("ADMIN"), listCompaniesForAdmin);
 router.get(
   "/:id",
   allowRoles("INSTITUTION", "STUDENT", "INDUSTRY", "ADMIN"),

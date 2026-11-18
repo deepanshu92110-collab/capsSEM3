@@ -3,11 +3,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { scoreSkills } from "../utils/matchingAlgorithm.js";
 import { gapOpportunity } from "./skillGap.controller.js";
 import { mentionsSkill } from "../utils/skillText.js";
+import { publicOpportunityWhere } from "../utils/publicOpportunity.js";
 
 export const matchOpportunities = asyncHandler(async (req, res) => {
   const student = await prisma.studentProfile.findUnique({ where: { userId: req.user.id }, include: { skills: { include: { skill: true } } } });
   if (!student) return res.status(404).json({ success: false, message: "Student profile not found" });
-  const opportunities = await prisma.opportunity.findMany({ where: { status: "OPEN" }, include: { company: { select: { name: true } } }, orderBy: { createdAt: "desc" } });
+  const opportunities = await prisma.opportunity.findMany({ where: publicOpportunityWhere(), include: { company: { select: { name: true } } }, orderBy: { createdAt: "desc" } });
   const skills = await prisma.skill.findMany();
   const results = opportunities.map((opportunity) => {
     const text = [opportunity.title, opportunity.description, opportunity.responsibilities, opportunity.qualifications].filter(Boolean).join(" ").toLowerCase();

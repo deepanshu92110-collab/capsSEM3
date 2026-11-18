@@ -68,6 +68,12 @@ enum InternshipStatus {
   CANCELLED
 }
 
+enum CompanyVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 model User {
   id             String          @id @default(cuid())
   fullName       String
@@ -227,6 +233,7 @@ model Company {
   description   String?
   contactInfo   String?
   isVerified    Boolean  @default(false)
+  verificationStatus CompanyVerificationStatus @default(PENDING)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)

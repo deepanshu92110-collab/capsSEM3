@@ -6,3 +6,4 @@ export const placementService = { mine: () => api.get("/placements/me"), institu
 export const notificationService = { list: () => api.get("/notifications"), unreadCount: () => api.get("/notifications/unread-count"), read: id => api.patch(`/notifications/${id}/read`), readAll: () => api.patch("/notifications/read-all"), remove: id => api.delete(`/notifications/${id}`) };
 export const dashboardService = { student: () => api.get("/dashboard/student"), industry: () => api.get("/dashboard/industry"), institution: () => api.get("/dashboard/institution"), admin: () => api.get("/dashboard/admin") };
 export const institutionService = { students: () => api.get("/institutions/me/students") };
+export const adminService = { companies: () => api.get("/institutions/companies"), verifyCompany: (id, verificationStatus) => api.patch(`/institutions/companies/${id}/verify`, { verificationStatus }) };

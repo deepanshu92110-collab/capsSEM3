@@ -76,13 +76,23 @@ export const verifyInstitution = asyncHandler(async (req, res) => {
   res.json({ success: true, data: { institution } });
 });
 export const verifyCompany = asyncHandler(async (req, res) => {
-  if (typeof req.body?.isVerified !== "boolean")
+  const verificationStatus = req.body?.verificationStatus || (typeof req.body?.isVerified === "boolean" ? (req.body.isVerified ? "VERIFIED" : "PENDING") : null);
+  if (!["PENDING", "VERIFIED", "REJECTED"].includes(verificationStatus))
     return res
       .status(400)
-      .json({ success: false, message: "isVerified must be a boolean" });
+      .json({ success: false, message: "verificationStatus must be PENDING, VERIFIED, or REJECTED" });
   const company = await prisma.company.update({
     where: { id: req.params.id },
-    data: { isVerified: req.body.isVerified },
+    data: { verificationStatus, isVerified: verificationStatus === "VERIFIED" },
+    include: { user: { select: { fullName: true, email: true } } },
   });
   res.json({ success: true, data: { company } });
+});
+
+export const listCompaniesForAdmin = asyncHandler(async (req, res) => {
+  const companies = await prisma.company.findMany({
+    include: { user: { select: { id: true, fullName: true, email: true, createdAt: true } }, _count: { select: { opportunities: true } } },
+    orderBy: [{ verificationStatus: "asc" }, { createdAt: "desc" }],
+  });
+  res.json({ success: true, data: { companies } });
 });

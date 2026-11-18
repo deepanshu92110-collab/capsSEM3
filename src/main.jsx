@@ -15,7 +15,7 @@ import OpportunityForm from "./pages/OpportunityForm";
 import OpportunityBrowse from "./pages/OpportunityBrowse";
 import OpportunityDetails from "./pages/OpportunityDetails";
 import SkillsHub from "./pages/SkillsHub";
-import { AdminPlacements, Applicants, ApplicantDetails, ApplicationDetails, CompanyInterviews, CompanyInternships, InstitutionInternships, InstitutionPlacements, InstitutionStudents, MyApplications, MyInterviews, MyInternships, MyPlacements, NotificationsPage, Person4Dashboard, PlacementAnalytics } from "./pages/Person4Pages";
+import { AdminPlacements, Applicants, ApplicantDetails, ApplicationDetails, CompanyInterviews, CompanyInternships, CompanyVerification, InstitutionInternships, InstitutionPlacements, InstitutionStudents, MyApplications, MyInterviews, MyInternships, MyPlacements, NotificationsPage, Person4Dashboard, PlacementAnalytics } from "./pages/Person4Pages";
 import {
   StudentProfile,
   EditStudentProfile,
@@ -26,7 +26,7 @@ import "./styles.css";
 function Index() {
   const { user, loading } = useAuth();
   if (loading) return <div className="center">Loading SkillBridge…</div>;
-  return <Navigate to={user ? (user.role === "INDUSTRY" ? "/industry" : "/home") : "/login"} replace />;
+  return <Navigate to={user ? (user.role === "INDUSTRY" ? "/industry" : user.role === "ADMIN" ? "/dashboard/admin" : "/home") : "/login"} replace />;
 }
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -82,6 +82,7 @@ createRoot(document.getElementById("root")).render(
             <Route element={<RoleBasedRoute roles={["ADMIN"]} />}>
               <Route path="/dashboard/admin" element={<Person4Dashboard kind="admin" />} />
               <Route path="/admin/placements" element={<AdminPlacements />} />
+              <Route path="/admin/companies" element={<CompanyVerification />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
