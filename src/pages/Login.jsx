@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Brand from "../components/Brand";
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate(),
@@ -29,7 +30,7 @@ export default function Login() {
   return (
     <main className="auth-shell">
       <section className="brand">
-        <span className="mark">SB</span>
+        <Brand to="/" inverse />
         <p className="eyebrow">SKILLBRIDGE AI</p>
         <h1>
           Build the bridge
@@ -40,6 +41,7 @@ export default function Login() {
           One profile connecting learning, industry skills and meaningful
           careers.
         </p>
+        <div className="auth-aside-note"><span>01</span><p>Skills with direction.<br/>Opportunities with context.</p></div>
       </section>
       <form className="card auth-card" onSubmit={submit}>
         <p className="eyebrow">WELCOME BACK</p>

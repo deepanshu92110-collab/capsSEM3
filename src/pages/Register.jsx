@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Brand from "../components/Brand";
 export default function Register() {
   const { register } = useAuth(),
     navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function Register() {
   return (
     <main className="auth-shell">
       <section className="brand">
-        <span className="mark">SB</span>
+        <Brand to="/" inverse />
         <p className="eyebrow">JOIN SKILLBRIDGE</p>
         <h1>
           Bring skills,
@@ -45,6 +46,7 @@ export default function Register() {
           people and opportunity together.
         </h1>
         <p>Create a workspace for your next step.</p>
+        <div className="auth-aside-note"><span>01</span><p>Students, institutions and<br/>companies move forward together.</p></div>
       </section>
       <form className="card auth-card" onSubmit={submit}>
         <p className="eyebrow">GET STARTED</p>
